@@ -1,0 +1,708 @@
+/* Header fixo no topo no mobile */
+@media (max-width: 991.98px) {
+    .gerenciamento-header-fixed {
+        position: sticky;
+        top: 0;
+        z-index: 1050;
+        background: inherit;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 2000 !important; /* Bem acima do header */
+        width: 80%;
+        max-width: 320px;
+        background: #fff;
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    }
+    [data-bs-theme='dark'] .sidebar {
+        background: #111;
+    }
+}
+/* Estilos específicos da página de Gerenciamento */
+body {
+    font-size: 1.125rem;
+}
+.sidebar {
+    width: 280px;
+}
+@media (min-width: 992px) {
+    /* telas grandes: fixa à esquerda */
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        transform: none !important;
+        display: block !important; /* força visível no desktop */
+        flex: 0 0 280px; /* largura fixa no layout flex */
+    }
+    main.flex-grow-1 {
+        padding-left: 0;
+    }
+}
+.sidebar .list-group-item {
+    font-size: 1.05rem;
+    padding: 0.9rem 1rem;
+}
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.quick-actions .btn {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.05rem;
+}
+.card-title {
+    font-size: 1.15rem;
+}
+.large-icon {
+    font-size: 1.35rem;
+    vertical-align: text-bottom;
+}
+
+/* =========================
+   Acessibilidade: transições suaves ao alterar o tamanho da fonte
+   - Escopo apenas no layout de Gerenciamento (main.flex-grow-1 e sidebar)
+   - Evita impacto em telas públicas como login/home
+   ========================= */
+:root {
+    --a11y-font-transition: 160ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    --a11y-page-transition: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    --theme-switch-duration: 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Respeita usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --a11y-font-transition: 0ms;
+        --theme-switch-duration: 0ms;
+    }
+}
+
+/* Transição no próprio root ajuda a suavizar a mudança global */
+html {
+    transition: font-size var(--a11y-font-transition);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Escopo principal do Gerenciamento */
+/* Evitar custo alto de layout em tabelas e listas pesadas */
+.data-table,
+.data-table *,
+table,
+table * {
+    transition: none !important;
+}
+
+/* =========================
+   Responsividade genérica: tabelas (.data-table) viram cartões no mobile
+   Aplica a todas as páginas de gerenciamento
+   ========================= */
+@media (max-width: 768px) {
+    .data-table thead {
+        display: none;
+    }
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
+    .data-table td {
+        display: block;
+        width: 100%;
+    }
+    .data-table tr {
+        margin-bottom: 0.85rem;
+        border: 1px solid #e9ecef;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background: #fff;
+    }
+    [data-bs-theme='dark'] .data-table tr {
+        background: var(--theme-surface-1);
+        border-color: var(--theme-border);
+    }
+    .data-table td {
+        border: none !important;
+        border-bottom: 1px solid #e9ecef !important;
+        position: relative;
+        padding: 0.75rem 0.75rem 0.75rem 45% !important;
+        min-height: 50px;
+        word-wrap: anywhere;
+        line-height: 1.25;
+        font-size: 0.95rem;
+    }
+    [data-bs-theme='dark'] .data-table td {
+        border-bottom-color: var(--theme-border) !important;
+    }
+    .data-table td:last-child {
+        border-bottom: none !important;
+    }
+    .data-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: #6c757d;
+        max-width: 40%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    [data-bs-theme='dark'] .data-table td::before {
+        color: var(--theme-text-secondary);
+    }
+    /* Evita rolagem horizontal no mobile quando virar cartões */
+    .table-responsive {
+        overflow-x: visible;
+    }
+}
+
+/* Telas um pouco menores: dá mais espaço para os rótulos (labels) */
+@media (max-width: 576px) {
+    .data-table td {
+        padding-left: 42% !important;
+    }
+}
+
+/* Telas muito estreitas: prioriza o rótulo para evitar sobreposição */
+@media (max-width: 360px) {
+    .data-table td {
+        padding-left: 50% !important;
+        font-size: 0.9rem;
+    }
+    .data-table td::before {
+        max-width: 45%;
+        font-size: 0.85rem;
+    }
+}
+
+/* =========================
+   Transição suave entre páginas do Gerenciamento
+   ========================= */
+@keyframes page-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+        filter: saturate(0.98) contrast(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: none;
+    }
+}
+
+/* =========================
+   Transição de tema (dark/light) suave
+   ========================= */
+html.theme-transition,
+html.theme-transition body,
+html.theme-transition .card,
+html.theme-transition header,
+html.theme-transition footer,
+html.theme-transition .bg-body,
+html.theme-transition .bg-body-tertiary,
+html.theme-transition .list-group-item,
+html.theme-transition .dropdown-menu,
+html.theme-transition .offcanvas,
+html.theme-transition .modal-content,
+html.theme-transition .table,
+html.theme-transition .table thead th,
+html.theme-transition .data-table,
+html.theme-transition .data-table thead th,
+html.theme-transition .form-control,
+html.theme-transition .form-select,
+html.theme-transition .input-group-text,
+html.theme-transition .badge,
+html.theme-transition .btn {
+    transition:
+        background-color var(--theme-switch-duration),
+        color var(--theme-switch-duration),
+        border-color var(--theme-switch-duration),
+        box-shadow var(--theme-switch-duration);
+}
+
+.page-view {
+    will-change: opacity, transform;
+}
+
+.page-view.is-entering {
+    animation: page-fade-in var(--a11y-page-transition) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-view.is-entering {
+        animation: none;
+    }
+}
+
+/* KPIs */
+.kpi .kpi-label {
+    font-size: 0.95rem;
+    color: #6c757d;
+}
+.kpi .kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+/* Boas-vindas (hero) */
+.welcome-hero .card-body {
+    padding: 1.25rem 1.25rem;
+}
+@media (min-width: 992px) {
+    .welcome-hero .card-body {
+        padding: 1.5rem 2rem;
+    }
+}
+[data-bs-theme='dark'] .welcome-hero .card {
+    background: #141414;
+}
+
+/* Modo escuro com Bootstrap Color Modes */
+[data-bs-theme='dark'] {
+    /* Paleta elegante em camadas (preto + cinzas) */
+    --theme-bg-0: #0e0f12; /* fundo da página */
+    --theme-bg-1: #14161b; /* contêineres amplos (bg-body-tertiary) */
+    --theme-surface-1: #171a20; /* cards e superfícies */
+    --theme-surface-2: #1d2128; /* cabeçalhos de tabela e áreas elevadas */
+    --theme-border: #2a3039;
+    --theme-text: #e6e6e6;
+    --theme-text-secondary: #cfd3da;
+
+    /* Bootstrap vars baseadas na paleta */
+    --bs-body-bg: var(--theme-bg-0);
+    --bs-body-color: var(--theme-text);
+    --bs-border-color: var(--theme-border);
+    --bs-secondary-color: var(--theme-text-secondary);
+    --bs-link-color: #4ea1ff;
+    --bs-link-hover-color: #82c2ff;
+    --bs-tertiary-bg: var(--theme-bg-1);
+
+    /* Cards */
+    --bs-card-bg: var(--theme-surface-1);
+    --bs-card-color: var(--theme-text);
+    --bs-card-border-color: var(--theme-border);
+
+    /* Tabelas */
+    --bs-table-bg: var(--theme-surface-1);
+    --bs-table-color: var(--theme-text);
+    --bs-table-border-color: var(--theme-border);
+    --bs-table-striped-bg: #1a1f26;
+    --bs-table-hover-bg: #202632;
+
+    background: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+}
+/* Containers e superfícies */
+[data-bs-theme='dark'] .card {
+    background: var(--bs-card-bg);
+    color: var(--bs-card-color);
+    border-color: var(--bs-card-border-color);
+}
+[data-bs-theme='dark'] .bg-white,
+[data-bs-theme='dark'] .bg-light,
+[data-bs-theme='dark'] header.bg-white,
+[data-bs-theme='dark'] .modal-content,
+[data-bs-theme='dark'] .offcanvas,
+[data-bs-theme='dark'] .dropdown-menu {
+    background-color: var(--theme-surface-1) !important;
+    color: var(--theme-text) !important;
+}
+[data-bs-theme='dark'] .bg-body-tertiary {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+[data-bs-theme='dark'] .bg-body {
+    background-color: var(--bs-body-bg) !important;
+}
+[data-bs-theme='dark'] .border,
+[data-bs-theme='dark'] .border-bottom,
+[data-bs-theme='dark'] .border-top,
+[data-bs-theme='dark'] .border-start,
+[data-bs-theme='dark'] .border-end {
+    border-color: var(--bs-border-color) !important;
+}
+/* Classes utilitárias que não usam variáveis em todas as versões */
+[data-bs-theme='dark'] .text-secondary,
+[data-bs-theme='dark'] .text-muted,
+[data-bs-theme='dark'] small,
+[data-bs-theme='dark'] .text-body-secondary {
+    color: #e0e0e0 !important;
+}
+[data-bs-theme='dark'] .list-group-item {
+    background-color: #111;
+    color: #fff;
+    border-color: var(--bs-border-color);
+}
+[data-bs-theme='dark'] .list-group-item-action:hover,
+[data-bs-theme='dark'] .list-group-item-action:focus {
+    background-color: #1a1f26 !important;
+    color: #ffffff !important;
+    border-color: var(--theme-border) !important;
+}
+[data-bs-theme='dark'] .list-group-item.active {
+    background-color: #232936 !important;
+    color: #ffffff !important;
+    border-color: var(--theme-border) !important;
+}
+[data-bs-theme='dark'] .table {
+    color: var(--bs-table-color);
+    background: var(--bs-table-bg);
+}
+[data-bs-theme='dark'] .table tr {
+    border-color: var(--bs-table-border-color);
+}
+[data-bs-theme='dark'] .table thead th {
+    background-color: var(--theme-surface-2) !important;
+}
+[data-bs-theme='dark'] .navbar,
+[data-bs-theme='dark'] .border-bottom {
+    border-color: var(--theme-border) !important;
+}
+[data-bs-theme='dark'] .table th,
+[data-bs-theme='dark'] .table td {
+    color: var(--bs-table-color) !important;
+    border-color: var(--bs-table-border-color) !important;
+    background-color: transparent;
+}
+[data-bs-theme='dark'] .data-table th,
+[data-bs-theme='dark'] .data-table td {
+    color: var(--bs-table-color) !important;
+    border-color: var(--bs-table-border-color) !important;
+    background-color: transparent;
+}
+[data-bs-theme='dark'] .table thead th,
+[data-bs-theme='dark'] .data-table thead th {
+    color: var(--bs-table-color) !important;
+}
+[data-bs-theme='dark'] .table caption {
+    color: #e0e0e0 !important;
+}
+[data-bs-theme='dark'] .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: var(--bs-table-striped-bg);
+}
+[data-bs-theme='dark'] .table-hover > tbody > tr:hover > * {
+    background-color: var(--bs-table-hover-bg);
+}
+[data-bs-theme='dark'] .btn-outline-secondary {
+    color: var(--theme-text);
+    border-color: #b5b5b5;
+}
+[data-bs-theme='dark'] .btn-outline-primary {
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+[data-bs-theme='dark'] .btn-outline-danger {
+    color: var(--bs-danger);
+    border-color: var(--bs-danger);
+}
+[data-bs-theme='dark'] .btn-outline-info {
+    color: var(--bs-info);
+    border-color: var(--bs-info);
+}
+[data-bs-theme='dark'] .btn-outline-success {
+    color: var(--bs-success);
+    border-color: var(--bs-success);
+}
+[data-bs-theme='dark'] .btn-outline-warning {
+    color: var(--bs-warning);
+    border-color: var(--bs-warning);
+}
+[data-bs-theme='dark'] .btn-outline-secondary:hover {
+    background-color: #2a2f3a;
+    border-color: #d0d0d0;
+    color: var(--theme-text);
+}
+[data-bs-theme='dark'] .btn-outline-primary:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.15);
+    border-color: var(--bs-primary);
+    color: #fff;
+}
+[data-bs-theme='dark'] .btn-outline-danger:hover {
+    background-color: rgba(var(--bs-danger-rgb), 0.15);
+    border-color: var(--bs-danger);
+    color: #fff;
+}
+[data-bs-theme='dark'] .btn-outline-info:hover {
+    background-color: rgba(var(--bs-info-rgb), 0.15);
+    border-color: var(--bs-info);
+    color: #fff;
+}
+[data-bs-theme='dark'] .btn-outline-success:hover {
+    background-color: rgba(var(--bs-success-rgb), 0.15);
+    border-color: var(--bs-success);
+    color: #fff;
+}
+[data-bs-theme='dark'] .btn-outline-warning:hover {
+    background-color: rgba(var(--bs-warning-rgb), 0.18);
+    border-color: var(--bs-warning);
+    color: #1a1a1a;
+}
+
+/* Foco visível com anel na cor do acento */
+[data-bs-theme='dark'] .btn-outline-primary:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-danger:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-info:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-info-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-success:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-success-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-warning:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-warning-rgb), 0.35);
+}
+[data-bs-theme='dark'] .btn-outline-secondary:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(200, 200, 200, 0.25);
+}
+
+/* Estado disabled mantém contraste do contorno, mas desatura a cor do texto */
+[data-bs-theme='dark'] .btn-outline-primary:disabled,
+[data-bs-theme='dark'] .btn-outline-danger:disabled,
+[data-bs-theme='dark'] .btn-outline-info:disabled,
+[data-bs-theme='dark'] .btn-outline-success:disabled,
+[data-bs-theme='dark'] .btn-outline-warning:disabled,
+[data-bs-theme='dark'] .btn-outline-secondary:disabled {
+    color: #9aa0a6 !important;
+    opacity: 0.7;
+}
+
+/* Ajuste robusto via CSS variables do Bootstrap para o btn-outline-secondary no dark */
+[data-bs-theme='dark'] .btn-outline-secondary {
+    /* Estado padrão */
+    --bs-btn-color: var(--theme-text);
+    --bs-btn-border-color: #d0d0d0;
+    /* Hover */
+    --bs-btn-hover-color: var(--theme-text);
+    --bs-btn-hover-bg: #2a2f3a;
+    --bs-btn-hover-border-color: #e0e0e0;
+    /* Focus ring */
+    --bs-btn-focus-shadow-rgb: 200, 200, 200;
+    /* Disabled */
+    --bs-btn-disabled-color: #9aa0a6;
+    --bs-btn-disabled-border-color: #9aa0a6;
+}
+
+/* Botão do modo escuro mais visível no dark mode */
+[data-bs-theme='dark'] #a11y-contrast.btn {
+    color: #fff;
+    border-color: #c8c8c8;
+}
+
+/* Tema claro: reforço de contraste para btn-outline-secondary dentro de linhas de aviso */
+[data-bs-theme='light'] .table-warning .btn-outline-secondary {
+    /* Estado padrão com leve preenchimento para contraste na linha amarela */
+    --bs-btn-color: #343a40; /* texto mais escuro */
+    --bs-btn-border-color: #6c757d; /* borda secundaria padrão */
+    --bs-btn-bg: rgba(108, 117, 125, 0.08); /* leve preenchimento */
+    color: #343a40 !important;
+    border-color: #6c757d !important;
+    background-color: rgba(108, 117, 125, 0.08) !important;
+    /* Hover/Focus */
+    --bs-btn-hover-color: #212529;
+    --bs-btn-hover-bg: rgba(108, 117, 125, 0.16);
+    --bs-btn-hover-border-color: #545b62;
+    --bs-btn-focus-shadow-rgb: 108, 117, 125;
+    &:hover {
+        color: #212529 !important;
+        background-color: rgba(108, 117, 125, 0.16) !important;
+        border-color: #545b62 !important;
+    }
+    /* Active */
+    --bs-btn-active-color: #212529;
+    --bs-btn-active-bg: rgba(108, 117, 125, 0.2);
+    --bs-btn-active-border-color: #545b62;
+    &:active {
+        color: #212529 !important;
+        background-color: rgba(108, 117, 125, 0.2) !important;
+        border-color: #545b62 !important;
+    }
+}
+[data-bs-theme='dark'] #a11y-contrast.btn:hover {
+    background-color: #2a2f3a;
+    border-color: #d6d6d6;
+}
+
+/* Formulários */
+[data-bs-theme='dark'] .form-control,
+[data-bs-theme='dark'] .form-select,
+[data-bs-theme='dark'] .input-group-text {
+    background-color: #181818;
+    color: #fff;
+    border-color: #555;
+}
+[data-bs-theme='dark'] ::placeholder {
+    color: #9aa3af !important;
+    opacity: 1;
+}
+[data-bs-theme='dark'] .form-control:focus,
+[data-bs-theme='dark'] .form-select:focus {
+    background-color: #1d1d1d;
+    color: #fff;
+    border-color: #6c757d;
+    box-shadow: 0 0 0 0.25rem rgba(78, 161, 255, 0.25);
+}
+[data-bs-theme='dark'] .form-check-input {
+    background-color: #181818;
+    border-color: #555;
+}
+[data-bs-theme='dark'] .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+[data-bs-theme='dark'] .invalid-feedback {
+    color: #ffb3b3 !important;
+}
+
+/* Textos pequenos e datas */
+[data-bs-theme='dark'] small,
+[data-bs-theme='dark'] .text-secondary,
+[data-bs-theme='dark'] .text-muted,
+[data-bs-theme='dark'] .cliente-telefone,
+[data-bs-theme='dark'] .data-cadastro {
+    color: var(--theme-text-secondary) !important;
+}
+
+/* Tabela: regras específicas adicionais ficam mais abaixo no bloco "Reforço universal" */
+
+/* Reforço de legibilidade nas células do corpo da tabela (modo escuro) */
+[data-bs-theme='dark'] .data-table tbody td {
+    color: var(--theme-text) !important;
+}
+[data-bs-theme='dark'] .data-table tbody td *:not(.badge):not(.btn) {
+    color: inherit !important;
+}
+[data-bs-theme='dark'] .data-table tbody td .text-secondary {
+    color: var(--theme-text-secondary) !important;
+}
+/* Modais */
+[data-bs-theme='dark'] .modal-header,
+[data-bs-theme='dark'] .modal-footer {
+    border-color: #333 !important;
+}
+[data-bs-theme='dark'] .btn-close {
+    filter: invert(1);
+}
+
+/* Sidebar no mobile */
+[data-bs-theme='dark'] .sidebar {
+    background: #111;
+}
+
+/* Badges e avisos */
+[data-bs-theme='dark'] .badge.text-bg-danger {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+/* Badge warning no dark: fundo âmbar mais escuro e texto escuro ou preto conforme contraste */
+[data-bs-theme='dark'] .badge.text-bg-warning {
+    background-color: #8a6d1d !important; /* âmbar escuro */
+    color: #fff !important; /* branco para legibilidade */
+}
+
+/* Primário mais escuro/roxo no modo escuro */
+[data-bs-theme='dark'] {
+    --bs-primary: #6f42c1; /* roxo */
+    --bs-primary-rgb: 111, 66, 193;
+}
+[data-bs-theme='dark'] .btn-primary {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+}
+[data-bs-theme='dark'] .btn-primary:hover {
+    background-color: #5a36a2 !important;
+    border-color: #5a36a2 !important;
+}
+[data-bs-theme='dark'] .btn-primary:focus {
+    box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.35) !important;
+}
+[data-bs-theme='dark'] .btn-primary.disabled,
+[data-bs-theme='dark'] .btn-primary:disabled {
+    background-color: rgba(111, 66, 193, 0.6) !important;
+    border-color: rgba(111, 66, 193, 0.6) !important;
+}
+
+@media (max-width: 991.98px) {
+    /* lg breakpoint */
+    .sidebar {
+        width: 80%;
+        max-width: 320px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1040; /* acima do conteúdo */
+        background: #fff;
+        transform: translateX(-100%);
+        transition: transform 0.2s ease-in-out;
+    }
+    /* Quando visível no mobile, exibimos com translateX(0) */
+    body.sidebar-open #sidebar {
+        transform: translateX(0);
+    }
+    /* Overlay removido: não exibir backdrop quando a sidebar está aberta */
+}
+
+/* =============================================================
+   Reforço universal de contraste para tabelas no modo escuro
+   ============================================================= */
+[data-bs-theme='dark'] .table,
+[data-bs-theme='dark'] .data-table {
+    color: var(--bs-table-color) !important;
+}
+[data-bs-theme='dark'] .data-table {
+    /* Força variáveis do Bootstrap no escopo da data-table em dark */
+    --bs-table-bg: var(--theme-surface-1);
+    --bs-table-color: var(--theme-text);
+    --bs-table-border-color: var(--theme-border);
+    --bs-table-striped-bg: #1a1f26;
+    --bs-table-hover-bg: #202632;
+}
+[data-bs-theme='dark'] .table thead th,
+[data-bs-theme='dark'] .data-table thead th {
+    color: var(--bs-table-color) !important;
+}
+[data-bs-theme='dark'] .table tbody td,
+[data-bs-theme='dark'] .data-table tbody td {
+    color: var(--bs-table-color) !important;
+}
+[data-bs-theme='dark'] .data-table .fw-semibold,
+[data-bs-theme='dark'] .data-table small,
+[data-bs-theme='dark'] .data-table .text-secondary {
+    color: var(--bs-table-color) !important;
+}
+
+/* Ajuste de contraste para linhas de aviso (estoque baixo) no dark */
+[data-bs-theme='dark'] .table-warning > td,
+[data-bs-theme='dark'] .table-warning > th {
+    background-color: #2f2a1a !important; /* mais escuro para reduzir o amarelado forte */
+    color: #f4e6b6 !important; /* texto âmbar claro */
+    border-color: #5e5228 !important;
+}
+[data-bs-theme='dark'] .table-hover > tbody > tr.table-warning:hover > * {
+    background-color: #433a1e !important;
+}
+[data-bs-theme='dark'] .table-warning .fw-semibold,
+[data-bs-theme='dark'] .table-warning .text-secondary,
+[data-bs-theme='dark'] .table-warning small {
+    color: #f4e6b6 !important;
+}
+[data-bs-theme='dark'] .data-table .fw-semibold,
+[data-bs-theme='dark'] .data-table small,
+[data-bs-theme='dark'] .data-table .text-secondary {
+    color: var(--bs-table-color) !important;
+}
+
+/* Header das tabelas no modo escuro */
+[data-bs-theme='dark'] .data-table thead th {
+    background-color: var(--theme-surface-2) !important;
+}

@@ -1,0 +1,17 @@
+/* Importar variáveis primeiro para que estejam disponíveis aos demais estilos */
+@import 'colors.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.min.css';
+@import './geral/navbar.css';
+@import './geral/footer.css';
+@import './login/login.css';
+@import './gerenciamento/gerenciamento.css';
+@import './cadastro/cadastro.css';
+@import './home/animacoes.css';
+@import './gerenciamento/clientes.css';
+@import'./gerenciamento/Vendas.css';
+
+/* Reserve o espaço da barra de rolagem para evitar "salto" de layout quando ela aparece/desaparece */
+html {
+	scrollbar-gutter: stable;
+}

@@ -1,0 +1,70 @@
+/* =========================
+   BASE
+   ========================= */
+html {
+    overflow-x: hidden;
+}
+body {
+    margin: 0;
+    padding: 0;
+    /* Espaçamento do body para navbar é tratado globalmente em geral/navbar.css.
+       Não forçar padding-top aqui para evitar conflito em páginas que reutilizam base.css */
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    background: var(--gradient-primary);
+    min-height: 100vh;
+}
+
+/* Animação de fundo removida - estava causando travamento */
+h1 {
+    text-align: center;
+    color: var(--text-primary);
+}
+label {
+    font-weight: bold;
+}
+input {
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #480e7e;
+}
+
+.escrita {
+    display: inline-block;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+.container-escrita {
+    margin: 3rem 0 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 80px;
+    position: relative;
+}
+
+.container-escrita::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--secondary-blue);
+    border-radius: 2px;
+}

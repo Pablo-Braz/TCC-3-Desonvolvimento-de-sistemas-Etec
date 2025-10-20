@@ -1,0 +1,442 @@
+/* ===================================================================
+   📊 SEÇÃO DE ESTATÍSTICAS
+   =================================================================== */
+
+.section-stats {
+    padding: 4rem 0;
+    background: transparent;
+    margin: 3rem 0;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-white);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--secondary-blue), var(--secondary-blue-dark));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(59, 130, 246, 0.15);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    color: var(--secondary-blue);
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--secondary-blue), var(--secondary-blue-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ===================================================================
+   💬 SEÇÃO DE DEPOIMENTOS
+   =================================================================== */
+
+.section-testimonials {
+    padding: 4rem 0;
+    background: var(--color-white);
+    margin: 3rem 0;
+}
+
+.testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.testimonial-card {
+    background: var(--color-white);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-light);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+}
+
+.testimonial-card::before {
+    content: none;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(59, 130, 246, 0.12);
+    border-color: var(--secondary-blue);
+}
+
+.testimonial-content {
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 0;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.author-avatar {
+    font-size: 3rem;
+    color: var(--secondary-blue);
+}
+
+.author-info h5 {
+    margin: 0;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.author-info span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.testimonial-rating {
+    color: var(--accent-yellow);
+    font-size: 1.2rem;
+}
+
+/* ===================================================================
+   🛠️ SEÇÃO DE SERVIÇOS
+   =================================================================== */
+
+.section-services {
+    padding: 4rem 0;
+    background: transparent;
+    margin: 3rem 0;
+    color: var(--text-primary);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.service-item {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-light);
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.service-item:hover {
+    transform: translateY(-10px);
+    background: #e9ecef;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.service-icon {
+    font-size: 3rem;
+    color: var(--secondary-blue);
+    margin-bottom: 1.5rem;
+}
+
+.service-item h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.service-item p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ===================================================================
+   📢 SEÇÃO CALL TO ACTION
+   =================================================================== */
+
+.section-cta {
+    padding: 4rem 0;
+    background: transparent;
+    margin: 3rem 0;
+    color: var(--text-primary);
+}
+
+.cta-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    align-items: center;
+}
+
+.cta-content h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--color-white);
+}
+
+.cta-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--white-90);
+    margin-bottom: 2rem;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.btn-cta.primary {
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-blue-dark) 100%);
+    color: var(--color-white);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.btn-cta.secondary {
+    background: transparent;
+    color: var(--color-white);
+    border: 2px solid var(--white-80);
+}
+
+.btn-cta.primary:hover {
+    background: linear-gradient(135deg, var(--secondary-blue-dark) 0%, #003f7f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn-cta.secondary:hover {
+    background: var(--bg-light);
+    transform: translateY(-2px);
+    border-color: var(--border-light);
+}
+
+.cta-image {
+    text-align: center;
+    font-size: 8rem;
+    color: var(--border-white);
+}
+
+/* ===================================================================
+   📱 RESPONSIVIDADE
+   =================================================================== */
+
+@media (max-width: 992px) {
+    .stats-container,
+    .testimonials-container,
+    .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        padding: 0 1.5rem;
+    }
+
+    .cta-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .cta-image {
+        font-size: 6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-stats,
+    .section-testimonials,
+    .section-services,
+    .section-cta {
+        padding: 3rem 0;
+        margin: 2rem 0;
+    }
+
+    .stats-container,
+    .testimonials-container,
+    .services-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+        gap: 1rem;
+    }
+
+    .stat-item,
+    .testimonial-card,
+    .service-item {
+        padding: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-cta {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonial-card::before {
+        font-size: 4rem;
+        top: -5px;
+    }
+
+    .service-icon,
+    .stat-icon {
+        font-size: 2.5rem;
+    }
+
+    .cta-image {
+        font-size: 4rem;
+    }
+}
+
+/* ===================================================================
+   🎨 ANIMAÇÕES ESPECIAIS
+   =================================================================== */
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-number.counting {
+    animation: countUp 0.8s ease-out;
+}
+
+/* ===================================================================
+   ♿ ACESSIBILIDADE
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .stat-item,
+    .testimonial-card,
+    .service-item {
+        transition: none !important;
+    }
+
+    .stat-item:hover,
+    .testimonial-card:hover,
+    .service-item:hover {
+        transform: none !important;
+    }
+}
+
+/* Focus visível */
+.btn-cta:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 3px;
+}
+
+/* ===================================================================
+   🌙 TEMA ESCURO
+   =================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .section-stats {
+        background: linear-gradient(135deg, var(--bg-dark-1) 0%, var(--text-muted) 100%);
+    }
+
+    .stat-item {
+        background: var(--text-muted);
+        color: var(--border-light);
+    }
+
+    .testimonial-card {
+        background: var(--text-muted);
+        border-color: var(--text-secondary);
+        color: var(--border-light);
+    }
+
+    .testimonial-content p {
+        color: #cbd5e1;
+    }
+
+    .author-info h5 {
+        color: #f7fafc;
+    }
+}
