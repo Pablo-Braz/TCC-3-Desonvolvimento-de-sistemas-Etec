@@ -41,32 +41,104 @@ class RequireTokenOrSession
         }
 
         // ✅ RESTO DO MIDDLEWARE APENAS PARA ROTAS PROTEGIDAS
-        // Tenta restaurar usuário via sessão DB caso não esteja autenticado
-        if (!Auth::check()) {
+        // Garantir que a sessão do request esteja iniciada (casos em que middleware roda antes)
+        try {
+            if ($request->hasSession() && method_exists($request->session(), 'start') && !method_exists($request->session(), 'isStarted') || ($request->hasSession() && method_exists($request->session(), 'isStarted') && !$request->session()->isStarted())) {
+                // Tenta iniciar a sessão para poder acessar dados
+                $request->session()->start();
+            }
+        } catch (\Throwable $e) {
+            Log::channel('security')->debug('Não foi possível iniciar sessão no middleware: ' . $e->getMessage());
+        }
+
+        // 1. Prioriza restauração via sessão/cache
+        $usuario = null;
+        if ($request->session()->has('user_id')) {
+            $usuario = Usuario::find($request->session()->get('user_id'));
+            if ($usuario) {
+                Auth::setUser($usuario);
+                Log::channel('security')->info('Usuário restaurado via sessão DB personalizada', [
+                    'user_id' => $usuario->id,
+                    'session_id' => $request->session()->getId()
+                ]);
+            }
+        }
+
+        // Fallback: se não encontrou via sessão carregada, tentar ler diretamente a tabela `sessions`
+        if (!$usuario) {
             try {
-                $sessionId = $request->session()->getId();
+                $sessionCookieName = config('session.cookie', 'laravel_session');
+                $sessionId = $request->cookie($sessionCookieName);
                 if ($sessionId) {
-                    $dbSession = DB::table('sessions')
-                        ->where('id', $sessionId)
-                        ->whereNotNull('user_id')
-                        ->first();
-                    
-                    if ($dbSession && $dbSession->user_id) {
-                        $usuario = Usuario::find($dbSession->user_id);
+                    $row = DB::table('sessions')->where('id', $sessionId)->first();
+                    if ($row) {
+                        $foundUserId = null;
+                        if (isset($row->user_id) && $row->user_id) {
+                            $foundUserId = $row->user_id;
+                        } else {
+                            // Tentar extrair user_id do payload (algumas rotas armazenam user_id no payload)
+                            try {
+                                if (!empty($row->payload)) {
+                                    // Tentativa 1: payload foi salvo com base64(json_encode(session->all()))
+                                    $decoded = @base64_decode($row->payload, true);
+                                    $maybe = $decoded !== false ? @json_decode($decoded, true) : null;
+                                    if (is_array($maybe) && !empty($maybe['user_id'])) {
+                                        $foundUserId = $maybe['user_id'];
+                                    } else {
+                                        // Tentativa 2: talvez payload seja serialize/unserialize
+                                        $maybe2 = @unserialize($row->payload);
+                                        if (is_array($maybe2) && !empty($maybe2['user_id'])) {
+                                            $foundUserId = $maybe2['user_id'];
+                                        }
+                                    }
+                                }
+                            } catch (\Throwable $e) {
+                                Log::channel('security')->debug('Erro ao decodificar payload da tabela sessions: ' . $e->getMessage());
+                            }
+                        }
+
+                        if ($foundUserId) {
+                            $usuario = Usuario::find($foundUserId);
                         if ($usuario) {
-                            // Não regenerar ID de sessão: evita criar nova sessão
+                            // Restora sessão e Auth
+                            $request->session()->put('user_id', $usuario->id);
                             Auth::setUser($usuario);
-                            Log::channel('security')->info('Usuário restaurado via sessão DB (sem regenerar sessão)', [
+                            Log::channel('security')->info('Usuário restaurado via sessions table (fallback)', [
                                 'user_id' => $usuario->id,
                                 'session_id' => $sessionId
                             ]);
                         }
+                        }
                     }
                 }
             } catch (\Exception $e) {
-                Log::channel('security')->warning('Erro ao tentar restaurar usuário via sessão DB', [
+                Log::channel('security')->warning('Falha no fallback de restauração de sessão', [
                     'error' => $e->getMessage()
                 ]);
+            }
+        }
+
+        // 2. Só tenta remember_token se NÃO houver sessão/cache
+        $loginViaRememberToken = false;
+        if (!$usuario && !Auth::check() && $request->cookies->has('remember_token')) {
+            $rememberToken = $request->cookie('remember_token');
+            $data = $this->tokenService->validateToken($rememberToken);
+            if ($data) {
+                $usuario = Usuario::find($data['user_id']);
+                if ($usuario) {
+                    $request->session()->put('user_id', $usuario->id);
+                    Auth::setUser($usuario);
+                    $loginViaRememberToken = true;
+                    Log::channel('security')->info('Usuário autenticado via remember_token', [
+                        'user_id' => $usuario->id,
+                        'token_preview' => substr($rememberToken,0,10).'...'
+                    ]);
+                }
+            } else {
+                // Token inválido: apenas remove o cookie, NÃO mexe na sessão/cache
+                cookie()->queue(cookie('remember_token', '', -1, '/', null, false, true, false, 'Lax'));
+                Log::channel('security')->info('remember_token inválido removido, mas sessão/cached login mantido');
+                // Não retorna deny, apenas segue o fluxo normal
             }
         }
 
@@ -150,6 +222,13 @@ class RequireTokenOrSession
                     ]);
                 }
             }
+        }
+
+        // Redireciona para gerenciamento APENAS se login foi via remember_token e está na home
+        $routeName = $request->route()?->getName();
+        $path = trim($request->path(), '/');
+        if ($loginViaRememberToken && ($routeName === 'home' || $path === '' || $path === '/' || $path === 'home')) {
+            return redirect()->route('gerenciamento');
         }
 
         return $next($request);

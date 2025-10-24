@@ -1,0 +1,8 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Mais Conectado",
+  "url": "https://maisconectado.alwaysdata.net",
+  "logo": "https://maisconectado.alwaysdata.net/logo.jpg",
+  "description": "Conexão simples para pequenos negócios"
+}

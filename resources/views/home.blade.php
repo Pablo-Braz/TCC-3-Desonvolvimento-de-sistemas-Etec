@@ -4,7 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Sistema</title>
+    <title>Mais Conectado - Conexão simples para pequenos negócios</title>
+    <meta name="description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MaisConectado">
+    <meta property="og:title" content="Mais Conectado - Conexão simples para pequenos negócios">
+    <meta property="og:description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mais Conectado - Conexão simples para pequenos negócios">
+    <meta name="twitter:description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <link rel="icon" href="/logo.jpg">
+    <script type="application/ld+json" src="/organization.json"></script>
     @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/app.js', 'resources/js/home/home.js'])
 </head>
 
