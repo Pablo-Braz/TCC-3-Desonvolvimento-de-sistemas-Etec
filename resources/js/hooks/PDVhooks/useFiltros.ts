@@ -26,6 +26,12 @@ const normalizar = (s: string) =>
               .toLowerCase()
         : '';
 
+const normalizarStatus = (status?: string) => {
+    const value = (status ?? '').toLowerCase();
+    if (value === 'conta_fiada') return 'pendente';
+    return value;
+};
+
 export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosReturn => {
     const [filtroStatus, setFiltroStatus] = useState('');
     const [filtroCliente, setFiltroCliente] = useState('');
@@ -51,9 +57,16 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
     // Filtro final
     const vendasFiltradas = useMemo(() => {
         const hasClienteSelecionado = !!filtroCliente;
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
 
         return vendas.filter((venda) => {
-            const statusOk = !filtroStatus || venda.status === filtroStatus;
+            const statusOk = !filtroStatus || normalizarStatus(venda.status) === filtroStatus;
+
+            // Filtra por data do dia
+            const dataVenda = new Date(venda.created_at);
+            dataVenda.setHours(0, 0, 0, 0);
+            const mesmoDia = dataVenda.getTime() === hoje.getTime();
 
             const vClienteId = getVendaClienteId(venda);
 
@@ -91,7 +104,7 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
                 }
             }
 
-            return statusOk && clienteOk;
+            return statusOk && clienteOk && mesmoDia;
         });
     }, [vendas, filtroStatus, filtroCliente, filtroClienteTexto, matchingClienteIds, selectedCliente]);
 

@@ -171,6 +171,17 @@ html:has(body.loginf) {
 .form-login-input:hover {
     box-shadow: none;
 }
+.form-login-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.form-login-input-wrapper .form-login-input {
+    flex: 1 1 auto;
+    padding-right: 2.75rem;
+    margin-bottom: 0;
+}
 
 /* Mensagem de erro */
 .form-login-error {
@@ -182,6 +193,76 @@ html:has(body.loginf) {
     margin-bottom: 0.8rem;
     font-size: 0.95rem;
     backdrop-filter: blur(6px);
+}
+
+/* Requisitos de senha (mesmo visual do cadastro) */
+.password-requirements {
+    margin-top: 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.15);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+        opacity 0.3s ease,
+        max-height 0.3s ease,
+        margin-top 0.3s ease,
+        padding 0.3s ease;
+}
+
+.password-requirements.show {
+    opacity: 1;
+    max-height: 300px;
+    margin-top: 0.5rem;
+    padding: 1rem;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.requirement-item i {
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.requirement-item.valid {
+    color: #86efac;
+}
+
+.requirement-item.valid i {
+    color: #22c55e;
+}
+
+.requirement-item.valid i::before {
+    content: '\f26b';
+}
+
+.requirement-item.invalid {
+    color: #fca5a5;
+}
+
+.requirement-item.invalid i {
+    color: #ef4444;
+}
+
+.requirement-item.invalid i::before {
+    content: '\f659';
+}
+
+.requirement-item span {
+    flex: 1;
+    line-height: 1.4;
 }
 
 /* Texto do checkbox "Lembrar-me" no tema escuro */
@@ -387,10 +468,16 @@ html:has(body.loginf) {
 }
 
 /* Ícone de olho personalizado (tema escuro) */
-.eye-icon {
+.form-login-input-wrapper .eye-icon {
     position: absolute;
     right: 14px;
-    top: 37px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    line-height: 0;
     cursor: pointer;
     font-size: 1.3rem;
     color: var(--white-90);
@@ -401,80 +488,79 @@ html:has(body.loginf) {
         transform 0.15s;
     z-index: 2;
 }
-.eye-icon:hover {
+.form-login-input-wrapper .eye-icon:hover {
     color: var(--color-white);
     opacity: 1;
     transform: scale(1.05);
 }
 
-
 .switch-remember {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            gap: 8px;
-        }
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 8px;
+}
 
-        .switch-remember input[type="checkbox"] {
-            display: none;
-        }
+.switch-remember input[type='checkbox'] {
+    display: none;
+}
 
-        .switch-remember .slider {
-            width: 32px;
-            height: 20px;
-            background: #b80e93;
-            border-radius: 12px;
-            position: relative;
-            transition: background 0.3s;
-        }
+.switch-remember .slider {
+    width: 32px;
+    height: 20px;
+    background: #b80e93;
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.3s;
+}
 
-        .switch-remember .slider::before {
-            content: "";
-            position: absolute;
-            left: 2px;
-            top: 2px;
-            width: 16px;
-            height: 16px;
-            background: #000000;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s;
-        }
+.switch-remember .slider::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    background: #000000;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s;
+}
 
-        .switch-remember input:checked+.slider {
-            background: #7c3aed;
-        }
+.switch-remember input:checked + .slider {
+    background: #7c3aed;
+}
 
-        .switch-remember input:checked+.slider::before {
-            transform: translateX(12px);
-            background: #7c3aed;
-        }
+.switch-remember input:checked + .slider::before {
+    transform: translateX(12px);
+    background: #7c3aed;
+}
 
-        .switch-remember .checkmark {
-            position: absolute;
-            top: 2px;
-            left: 8px;
-            width: 16px;
-            height: 16px;
-            stroke: #fff;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
+.switch-remember .checkmark {
+    position: absolute;
+    top: 2px;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
 
-        .switch-remember input:checked+.slider .checkmark {
-            opacity: 1;
-        }
+.switch-remember input:checked + .slider .checkmark {
+    opacity: 1;
+}
 
-        .switch-remember .label-text {
-            font-size: 1rem;
-            color: #ffffff;
-            font-weight: 500;
-        }
+.switch-remember .label-text {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: 500;
+}
 /* Corrige preenchimento automático para manter o ícone visível */
 input:-webkit-autofill {
     background-clip: text;
@@ -483,11 +569,13 @@ input:-webkit-autofill {
 }
 
 /* Ajusta o posicionamento do ícone para preenchimento automático */
-input:-webkit-autofill + .eye-icon {
-    position: absolute;
+.form-login-input-wrapper input:-webkit-autofill + .eye-icon {
     right: 14px;
-    top: 37px; /* Define uma posição fixa para evitar deslocamento */
+    top: 0;
+    bottom: 0;
     transform: none;
+    height: 100%;
+    line-height: 0;
     z-index: 2;
 }
 
@@ -653,9 +741,16 @@ input:-webkit-autofill + .eye-icon {
         color: #fff;
         font-size: 1.05rem;
         border-radius: 10px;
-        margin-bottom: 1.1rem;
+        margin-bottom: 0;
         padding: 0.7rem 1rem;
         transition: border-color 0.2s;
+    }
+    .form-login-group {
+        margin-bottom: 1.1rem;
+    }
+    .form-login-input-wrapper .form-login-input {
+        flex: 1 1 auto;
+        padding-right: 2.75rem;
     }
     .form-login-input:focus {
         border-color: #6b2ba6;

@@ -28,17 +28,17 @@ Route::middleware('guest')->group(function () {
         ->middleware('login.rate.limit'); // ✅ USA SEU MIDDLEWARE
 
     // Reset de senha (padrão Laravel - pode manter)
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    Route::get('recuperar-acesso', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+    Route::post('recuperar-acesso', [PasswordResetLinkController::class, 'store'])
         ->middleware('throttle:2,1')
         ->name('password.email');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    Route::get('recuperar-senha/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
+    Route::post('recuperar-senha', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
 
@@ -60,10 +60,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    // ✅ LOGOUT: Usa AuthenticatedSessionController (único que você usa dele)
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
 });
+
+// ✅ LOGOUT: acessível para sessões validadas via middleware customizado
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware(['require.token'])
+    ->name('logout');
 
 // Refresh Token via Cache
 Route::post('/refresh-token', function (Request $request) {
@@ -71,10 +73,10 @@ Route::post('/refresh-token', function (Request $request) {
     if (!$user) {
         return response()->json(['success' => false, 'message' => 'Não autenticado'], 401);
     }
-    
+
     $tokenService = app(\App\Services\Auth\CacheTokenService::class);
     $tokenData = $tokenService->getTokenData($user);
-    
+
     return response()->json([
         'success' => true,
         'auth' => $tokenData,

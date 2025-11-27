@@ -185,7 +185,7 @@ const TabelaDesktop = ({ vendasFiltradas, abrirDetalhes }: VendasListProps) => (
         <div className="card-header bg-body">
             <h5 className="mb-0">
                 <i className="bi bi-receipt-cutoff me-2"></i>
-                Histórico ({vendasFiltradas.length} vendas)
+                Histórico do dia ({vendasFiltradas.length} vendas)
             </h5>
         </div>
         <div className="card-body p-0">
@@ -309,7 +309,7 @@ export default function VendasList(props: VendasListProps) {
                                 <select className="form-select" value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)}>
                                     <option value="">Todos os status</option>
                                     <option value="concluida">✅ Concluída</option>
-                                    <option value="conta_fiada">📋 Conta Fiada</option>
+                                    <option value="pendente">⏳ Pendente (inclui Conta Fiada)</option>
                                     <option value="cancelada">❌ Cancelada</option>
                                 </select>
                             </div>

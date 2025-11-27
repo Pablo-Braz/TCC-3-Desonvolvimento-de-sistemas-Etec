@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Services\Auth\CacheTokenService;
+use App\Services\Auth\SessionService;
+use App\Services\Auth\LogoutService;
+use App\Http\Requests\Auth\LogoutRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -23,6 +27,10 @@ use Inertia\Response;
  */
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(private SessionService $sessionService, private CacheTokenService $tokenService, private LogoutService $logoutService)
+    {
+    }
+
     /**
      * Show the login page - NÃO USADO
      * Você usa LoginController->show()
@@ -64,11 +72,11 @@ class AuthenticatedSessionController extends Controller
      * Destroy session - USADO PARA LOGOUT
      * Único método que você utiliza deste controller
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(LogoutRequest $request): RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $usuario = Auth::user();
+        $this->logoutService->handle($request);
 
-        // LOG DE LOGOUT - Auditoria de sessões
         Log::channel('security')->info('Logout realizado (Controller)', [
             'user_id' => $usuario->id ?? 'N/A',
             'email' => $usuario->EMAIL ?? 'N/A',
@@ -76,11 +84,12 @@ class AuthenticatedSessionController extends Controller
             'timestamp' => now(),
         ]);
 
-        // LOGOUT SEGURO
-        Auth::guard('web')->logout();
-        $request->session()->invalidate(); // Invalida sessão atual
-        $request->session()->regenerateToken(); // Regenera CSRF token
+        $redirectRoute = route('login');
 
-        return redirect()->route('home')->with('success', 'Logout realizado com sucesso!');
+        if ($request->header('X-Inertia')) {
+            return Inertia::location($redirectRoute);
+        }
+
+        return redirect($redirectRoute)->with('success', 'Logout realizado com sucesso!');
     }
 }

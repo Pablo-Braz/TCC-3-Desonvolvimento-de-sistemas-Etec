@@ -4,17 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro</title>
-    <meta name="description" content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
+    <title>Cadastro | Sistema de Gerenciamento de Vendas e Estoque</title>
+    <meta name="description"
+        content="Crie sua conta e comece a usar o MaisConectado: gerenciamento de vendas, controle de estoque, PDV online, fiado e gestão de clientes para comércio local.">
+    <meta name="keywords"
+        content="cadastro gerenciamento de vendas, cadastro controle de estoque, cadastro comércio local, criar conta PDV online">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
     <meta property="og:title" content="Cadastro — MaisConectado">
-    <meta property="og:description" content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
+    <meta property="og:description"
+        content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
     <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cadastro — MaisConectado">
-    <meta name="twitter:description" content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
+    <meta name="twitter:description"
+        content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
     <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     @vite(['resources/css/app.css', 'resources/css/cadastro/cadastro.css', 'resources/js/app.js', 'resources/js/cadastro/cadastro.js'])
 </head>
@@ -91,14 +98,41 @@
                                 </div>
 
                                 <!-- Campo de Senha -->
-                                <div class="form-cadastro-group" style="position: relative;">
+                                <div class="form-cadastro-group">
                                     <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
-                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required minlength="12" placeholder="Mínimo 12 caracteres"
-                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    <span id="toggleSenha" class="eye-icon">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </span>
+                                    <div class="form-cadastro-input-wrapper">
+                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
+                                            required minlength="12" placeholder="Mínimo 12 caracteres"
+                                            {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                        <span id="toggleSenha" class="eye-icon">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Indicador de requisitos da senha -->
+                                    <div class="password-requirements" id="passwordRequirements">
+                                        <div class="requirement-item" data-requirement="length">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Mínimo de 12 caracteres</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="uppercase">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos uma letra maiúscula</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="lowercase">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos uma letra minúscula</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="number">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos um número</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="special">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos um caractere especial (@$!%*?&#)</span>
+                                        </div>
+                                    </div>
+                                    
                                     @error('SENHA_HASH')
                                         @if (!str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>
@@ -107,16 +141,18 @@
                                 </div>
 
                                 <!-- Campo de Confirmar Senha -->
-                                <div class="form-cadastro-group" style="position: relative;">
+                                <div class="form-cadastro-group">
                                     <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar
                                         Senha</label>
-                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
-                                        name="SENHA_HASH_confirmation" required minlength="12"
-                                        placeholder="Digite a senha novamente"
-                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    <span id="toggleSenhaConfirm" class="eye-icon">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </span>
+                                    <div class="form-cadastro-input-wrapper">
+                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
+                                            name="SENHA_HASH_confirmation" required minlength="12"
+                                            placeholder="Digite a senha novamente"
+                                            {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                        <span id="toggleSenhaConfirm" class="eye-icon">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </span>
+                                    </div>
                                     @error('SENHA_HASH')
                                         @if (str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>

@@ -51,7 +51,8 @@ class VendaService
                             'id' => $venda->usuario->id,
                             'nome' => $venda->usuario->NOME ?? ($venda->usuario->name ?? 'Usuário'),
                         ] : null,
-                        'created_at' => $venda->created_at->format('d/m/Y H:i'),
+                        'created_at' => optional($venda->created_at)->toIso8601String(),
+                        'created_at_formatado' => optional($venda->created_at)->format('d/m/Y H:i'),
                         'observacoes' => $venda->observacoes,
                     ];
                 });
@@ -70,7 +71,7 @@ class VendaService
                         'categoria' => $produto->categoria ? [
                             'nome' => $produto->categoria->nome
                         ] : null,
-                        'estoque' => [ 'quantidade' => (int) ($produto->estoque->quantidade ?? 0) ],
+                        'estoque' => ['quantidade' => (int) ($produto->estoque->quantidade ?? 0)],
                     ];
                 });
 
@@ -185,8 +186,8 @@ class VendaService
                 'troco' => $troco,
                 'status' => $status,
                 // ✅ se veio observação do usuário, preserva e adiciona a descrição dos itens ao final
-                'observacoes' => isset($dados['observacoes']) && trim((string)$dados['observacoes']) !== ''
-                    ? (trim((string)$dados['observacoes']) . ' | ' . $observacoesAuto)
+                'observacoes' => isset($dados['observacoes']) && trim((string) $dados['observacoes']) !== ''
+                    ? (trim((string) $dados['observacoes']) . ' | ' . $observacoesAuto)
                     : $observacoesAuto,
             ]);
 
@@ -216,7 +217,7 @@ class VendaService
                     DB::beginTransaction();
                     $this->atualizarContaFiada((int) $dados['cliente_id'], $total, $venda->id); // ✅ CORRIGIDO: Passa ID da venda
                     DB::commit();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     DB::rollBack();
                     // Não falha a venda, apenas registra o erro
                 }
@@ -234,6 +235,105 @@ class VendaService
             return [
                 'success' => false,
                 'errors' => ['system' => __('validation.pdv_erro_processar')]
+            ];
+        }
+    }
+
+    public function criarCancelada(array $dados, $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = $request->user();
+            $comercio = $user->comercio;
+
+            if (!$comercio) {
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Comércio não encontrado']
+                ];
+            }
+
+            $erros = $this->validarItens($dados['itens'], $comercio->id);
+            if (!empty($erros)) {
+                return [
+                    'success' => false,
+                    'errors' => $erros
+                ];
+            }
+
+            $subtotal = 0;
+            $itensProcessados = [];
+
+            foreach ($dados['itens'] as $item) {
+                $produto = Produto::where('id', $item['produto_id'])
+                    ->where('comercio_id', $comercio->id)
+                    ->first();
+
+                if (!$produto) {
+                    throw new Exception("Produto ID {$item['produto_id']} não encontrado");
+                }
+
+                $subtotalItem = $item['quantidade'] * $item['preco_unitario'];
+                $subtotal += $subtotalItem;
+
+                $itensProcessados[] = [
+                    'produto' => $produto,
+                    'quantidade' => $item['quantidade'],
+                    'preco_unitario' => $item['preco_unitario'],
+                    'subtotal' => $subtotalItem,
+                ];
+            }
+
+            $desconto = $dados['desconto'] ?? 0;
+            $total = $subtotal - $desconto;
+
+            $troco = null;
+            if ($dados['forma_pagamento'] === 'dinheiro' && isset($dados['valor_recebido'])) {
+                $troco = max(0, $dados['valor_recebido'] - $total);
+            }
+
+            $observacoesAuto = $this->montarObservacoesDaVenda($itensProcessados, $total, $desconto);
+
+            $venda = Venda::create([
+                'comercio_id' => $comercio->id,
+                'usuario_id' => $user->id,
+                'cliente_id' => $dados['cliente_id'] ?? null,
+                'subtotal' => $subtotal,
+                'desconto' => $desconto,
+                'total' => $total,
+                'forma_pagamento' => $dados['forma_pagamento'],
+                'valor_recebido' => $dados['valor_recebido'] ?? null,
+                'troco' => $troco,
+                'status' => 'cancelada',
+                'observacoes' => isset($dados['observacoes']) && trim((string) $dados['observacoes']) !== ''
+                    ? (trim((string) $dados['observacoes']) . ' | ' . $observacoesAuto)
+                    : $observacoesAuto,
+            ]);
+
+            foreach ($itensProcessados as $itemData) {
+                ItemVenda::create([
+                    'venda_id' => $venda->id,
+                    'produto_id' => $itemData['produto']->id,
+                    'quantidade' => $itemData['quantidade'],
+                    'preco_unitario' => $itemData['preco_unitario'],
+                    'subtotal' => $itemData['subtotal'],
+                ]);
+            }
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'data' => [
+                    'venda' => $venda,
+                ]
+            ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'errors' => ['system' => __('validation.pdv_erro_cancelar')]
             ];
         }
     }
@@ -276,7 +376,7 @@ class VendaService
         $quantidadeAtual = $quantidadeAnterior - $quantidade;
 
         if ($quantidadeAtual < 0) {
-            throw new \Exception(__('validation.pdv_estoque_insuficiente', [
+            throw new Exception(__('validation.pdv_estoque_insuficiente', [
                 'disponivel' => $quantidadeAnterior
             ]) . " para {$produto->nome}");
         }
@@ -285,7 +385,7 @@ class VendaService
         $estoque->update(['quantidade' => $quantidadeAtual]);
 
         // Mantém o registro do movimento (auditoria)
-        \App\Models\MovimentoEstoque::create([
+        MovimentoEstoque::create([
             'produto_id' => $produto->id,
             'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
@@ -321,7 +421,8 @@ class VendaService
         }
 
         // ✅ MONTAR DESCRIÇÃO BONITA E INTUITIVA
-        $dataFormatada = now()->format('d/m/Y \à\s H:i');
+        $timezone = config('app.timezone', 'America/Sao_Paulo');
+        $dataFormatada = now($timezone)->format('d/m/Y \à\s H:i');
         $valorFormatado = 'R$ ' . number_format($valor, 2, ',', '.');
 
         if ($produtosDescricao) {
@@ -358,7 +459,7 @@ class VendaService
     {
         try {
             $user = $request->user();
-            $venda = \App\Models\Venda::with(['itens.produto','cliente','usuario'])
+            $venda = Venda::with(['itens.produto', 'cliente', 'usuario'])
                 ->where('comercio_id', $user->comercio->id)
                 ->where('id', $id)
                 ->first();
@@ -448,7 +549,7 @@ class VendaService
         $estoque->update(['quantidade' => $quantidadeAtual]);
 
         // Registra movimento de entrada por cancelamento
-        \App\Models\MovimentoEstoque::create([
+        MovimentoEstoque::create([
             'produto_id' => $produto->id,
             'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,

@@ -84,6 +84,9 @@ class AnimationManager {
 
     animateNumbers(elements) {
         elements.forEach((element) => {
+            if (element.dataset.static === 'true') {
+                return;
+            }
             const finalCount = parseFloat(element.dataset.count || element.textContent);
             const isDecimal = finalCount % 1 !== 0;
             let currentCount = 0;
@@ -210,17 +213,43 @@ const setupSmoothScroll = () => {
 const setupNavbar = () => {
     const toggle = document.getElementById('navbarToggle');
     const menu = document.getElementById('navbarMenu');
+    const closeBtn = document.getElementById('navbarClose');
+    const overlay = document.getElementById('navbarOverlay');
 
     if (toggle && menu) {
+        const openMenu = () => {
+            toggle.classList.add('active');
+            menu.classList.add('active');
+            menu.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('nav-open');
+            if (overlay) {
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+            }
+        };
+
         const closeMenu = () => {
             toggle.classList.remove('active');
             menu.classList.remove('active');
+            menu.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('nav-open');
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+            }
         };
 
         toggle.addEventListener('click', () => {
-            toggle.classList.toggle('active');
-            menu.classList.toggle('active');
+            if (menu.classList.contains('active')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
         });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeMenu);
+        }
 
         menu.querySelectorAll('.nav-link').forEach((link) => {
             link.addEventListener('click', () => {
@@ -233,12 +262,15 @@ const setupNavbar = () => {
             if (e.key === 'Escape') closeMenu();
         });
 
-        // Fecha ao clicar fora do dropdown (fora do container e do toggle)
-        document.addEventListener('click', (e) => {
-            const withinToggle = toggle.contains(e.target);
-            const withinMenu = menu.contains(e.target);
-            if (!withinToggle && !withinMenu) closeMenu();
-        });
+        // Fecha ao clicar fora do menu (overlay)
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                // Só fecha se clicar diretamente no overlay, não em elementos filhos
+                if (e.target === overlay && menu.classList.contains('active')) {
+                    closeMenu();
+                }
+            });
+        }
     }
 };
 
